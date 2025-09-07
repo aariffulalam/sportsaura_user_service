@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  user-db:
+    image: mysql:8.0
+    container_name: user-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: userdb
+    ports:
+      - "3307:3306"
+    networks:
+      - sportsaura-net
+
+  user-service:
+    build: .
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - user-db
+    networks:
+      - sportsaura-net
+
+networks:
+  sportsaura-net:
+    driver: bridge

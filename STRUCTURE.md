@@ -203,14 +203,18 @@ Migration rules:
 
 | File | Kind | Covers |
 |---|---|---|
-| `AuthFlowIntegrationTest` | Integration (whole app, in-memory database) | Every endpoint, including 400/401/403/409 cases |
-| `RefreshTokenFlowIntegrationTest` | Integration | Refresh, one-time use, reuse detection, logout, logout-everywhere on password change |
+| `AuthFlowIntegrationTest` | Integration (whole app on real MySQL) | Every endpoint, including 400/401/403/409 cases |
+| `RefreshTokenFlowIntegrationTest` | Integration (real MySQL) | Refresh, one-time use, reuse detection, logout, logout-everywhere on password change |
+| `FlywayMigrationIntegrationTest` | Integration (real MySQL) | Every migration applied, tables exist, unique email, delete cascade |
+| `TestcontainersConfiguration` | Test setup | Starts MySQL 8.4 in Docker and connects the app to it |
 | `service/AuthServiceTest` | Unit | Registration rules, refresh and logout |
 | `service/RefreshTokenServiceTest` | Unit | Token hashing, expiry, one-time use, reuse detection |
 | `service/UserServiceTest` | Unit | Profile update and password change |
 | `security/JwtServiceTest` | Unit | Token creation, expiry, tampering |
 
-`src/test/resources/application-test.yml` switches tests to an in-memory H2 database.
+`src/test/resources/application-test.yml` holds test-only settings (JWT secret, short token
+lifetimes). The database comes from `TestcontainersConfiguration`, so integration tests need
+Docker running.
 
 ## Example: what happens on "register"
 

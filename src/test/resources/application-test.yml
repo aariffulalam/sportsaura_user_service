@@ -1,19 +1,14 @@
 # Used by tests marked @ActiveProfiles("test").
-# Runs against an in-memory H2 database, so tests need no MySQL and no .env file.
+#
+# Integration tests import TestcontainersConfiguration, which starts a real MySQL in Docker and
+# overrides the datasource URL, username and password. Flyway migrations and Hibernate's
+# schema validation run exactly as in production. Docker must be running.
 
 spring:
   datasource:
-    url: jdbc:h2:mem:userdb;MODE=MySQL;DB_CLOSE_DELAY=-1
-    username: sa
-    password: ""
-    driver-class-name: org.h2.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-
-  flyway:
-    enabled: false
+    # Placeholders only, so no .env file is needed. The MySQL container replaces them.
+    username: test
+    password: test
 
 app:
   jwt:

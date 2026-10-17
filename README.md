@@ -324,16 +324,24 @@ plugins and point CheckStyle-IDEA at `config/checkstyle/checkstyle.xml`.
 ./mvnw verify     # tests + format check + lint
 ```
 
-Tests use an in-memory database, so they need no MySQL, no Docker and no `.env`.
+**Docker must be running.** Integration tests start a real MySQL 8.4 in Docker (Testcontainers),
+run every Flyway migration on it, and check the tables match the code, exactly like production.
+No `.env` file is needed; the MySQL container is created and removed automatically.
 
-- `AuthFlowIntegrationTest` starts the whole app and calls the real endpoints.
-- `*ServiceTest` and `JwtServiceTest` are fast unit tests of the business logic.
+- `AuthFlowIntegrationTest` and `RefreshTokenFlowIntegrationTest` start the whole app on MySQL
+  and call the real endpoints.
+- `FlywayMigrationIntegrationTest` checks every migration applies, the tables exist, and the
+  constraints (unique email, delete cascade) work.
+- `*ServiceTest` and `JwtServiceTest` are fast unit tests of the business logic; they need no Docker.
 
-No JDK installed? Run the same thing in Docker:
+No JDK installed? Run the same thing in Docker. The extra `docker.sock` mount lets the tests
+start their MySQL container:
 
 ```bash
-docker run --rm -v "${PWD}:/app" -v sportsaura-m2:/root/.m2 -w /app \
-  maven:3.9-eclipse-temurin-25 mvn -B verify
+docker run --rm -v "${PWD}:/app" -v sportsaura-m2:/root/.m2 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -e TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal \
+  -w /app maven:3.9-eclipse-temurin-25 mvn -B verify
 ```
 
 ## Database migrations
@@ -376,6 +384,7 @@ Tables are created and changed by **Flyway**, not by Hibernate. Migrations are S
 | `Port 8081 is already in use` | Change `SERVER_PORT` in `.env` |
 | `./mvnw verify` fails on `spotless:check` | Run `./mvnw spotless:apply` and commit the result |
 | No red/yellow lines in VS Code | Install JDK 25 and the recommended extensions, then run *Java: Clean Java Language Server Workspace* |
+| Tests fail with `Could not find a valid Docker environment` | Docker Desktop is not running. Start it and run the tests again |
 
 ---
 

@@ -1,15 +1,55 @@
+# All environment-specific values come from environment variables.
+# For local development they are read from the .env file in the project root
+# (copy .env.example to .env). See README.md for what each variable means.
+
 spring:
+  application:
+    name: user-service
+
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
-    url: jdbc:mysql://user-db:3306/userdb?createDatabaseIfNotExist=true
-    username: root
-    password: root
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:sportsaura_user}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
+    open-in-view: false
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    database-platform: org.hibernate.dialect.MySQLDialect
+      # Hibernate only checks that the tables match the entities.
+      # Tables are created and changed by Flyway (src/main/resources/db/migration).
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  mvc:
+    problemdetails:
+      enabled: true
 
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:15}
+  refresh-token:
+    expiration-days: ${REFRESH_TOKEN_EXPIRATION_DAYS:30}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

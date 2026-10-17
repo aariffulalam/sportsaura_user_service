@@ -1,0 +1,9 @@
+.git
+.github
+.vscode
+.idea
+**/target
+.env
+*.md
+docker-compose.yml
+sportsaura_user_service

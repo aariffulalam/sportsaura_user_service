@@ -1,0 +1,23 @@
+# Used by tests marked @ActiveProfiles("test").
+# Runs against an in-memory H2 database, so tests need no MySQL and no .env file.
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:userdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+  flyway:
+    enabled: false
+
+app:
+  jwt:
+    secret: test-only-secret-key-with-at-least-32-characters
+    expiration-minutes: 5
+  refresh-token:
+    expiration-days: 1

@@ -4,6 +4,11 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Secrets ###
+.env
+.env.*
+!.env.example
+
 ### STS ###
 .apt_generated
 .classpath
@@ -30,4 +35,7 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+# Shared editor settings are committed so everyone gets the same lint and format behaviour.
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json

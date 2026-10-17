@@ -1,0 +1,27 @@
+{
+  // Lint: Checkstyle shows red lines for errors and yellow lines for warnings.
+  "java.checkstyle.configuration": "${workspaceFolder}/config/checkstyle/checkstyle.xml",
+  "java.checkstyle.version": "10.26.1",
+  "java.checkstyle.autocheck": true,
+
+  // Format: google-java-format on save, the same formatter Spotless uses in the build.
+  "editor.formatOnSave": true,
+  "[java]": {
+    "editor.defaultFormatter": "josevseb.google-java-format-for-vs-code",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "java.format.settings.google.version": "1.36.1",
+
+  // Java language server: compile errors (red) and warnings (yellow).
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.compile.nullAnalysis.mode": "automatic",
+
+  "editor.rulers": [100],
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.exclude": {
+    "**/target": true
+  }
+}

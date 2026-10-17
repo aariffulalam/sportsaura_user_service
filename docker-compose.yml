@@ -1,25 +1,49 @@
-version: '3.9'
+# Runs the user service and its MySQL database.
+# Values come from the .env file (copy .env.example to .env first).
+#
+#   Everything:      docker compose up --build
+#   Database only:   docker compose up -d user-db
+
 services:
   user-db:
-    image: mysql:8.0
-    container_name: user-db
+    image: mysql:8.4
+    container_name: sportsaura-user-db
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: userdb
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3307:3306"
+      - "${DB_PORT:-3307}:3306"
+    volumes:
+      - user-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
     networks:
       - sportsaura-net
 
   user-service:
     build: .
-    container_name: user-service
+    container_name: sportsaura-user-service
+    env_file:
+      - .env
+    environment:
+      # Inside Docker the database is reached by its service name, not localhost.
+      DB_HOST: user-db
+      DB_PORT: 3306
     ports:
-      - "8081:8081"
+      - "${SERVER_PORT:-8081}:${SERVER_PORT:-8081}"
     depends_on:
-      - user-db
+      user-db:
+        condition: service_healthy
     networks:
       - sportsaura-net
+
+volumes:
+  user-db-data:
 
 networks:
   sportsaura-net:

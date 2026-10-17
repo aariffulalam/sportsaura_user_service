@@ -1,0 +1,29 @@
+# Local development tools, kept separate from docker-compose.yml.
+#
+# phpMyAdmin: a database browser for the user service's MySQL, at http://localhost:8090
+# It logs in automatically as the app's database user and is reachable only from this machine.
+#
+# Start it together with the main file (values come from .env):
+#
+#   docker compose -f docker-compose.yml -f docker-compose.tools.yml up -d
+#
+# Stop everything:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.tools.yml down
+
+services:
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: sportsaura-user-phpmyadmin
+    environment:
+      PMA_HOST: user-db
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "127.0.0.1:${PHPMYADMIN_PORT:-8090}:80"
+    depends_on:
+      user-db:
+        condition: service_healthy
+    networks:
+      - sportsaura-net

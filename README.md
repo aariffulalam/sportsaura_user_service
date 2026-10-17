@@ -366,6 +366,8 @@ Tables are created and changed by **Flyway**, not by Hibernate. Migrations are S
 | Stop and delete the database | `docker compose down -v` |
 | See app logs | `docker compose logs -f user-service` |
 | Open a MySQL shell | `docker compose exec user-db mysql -uroot -p sportsaura_user` |
+| Start with phpMyAdmin (database browser on <http://localhost:8090>) | `docker compose -f docker-compose.yml -f docker-compose.tools.yml up -d` |
+| Stop everything including phpMyAdmin | `docker compose -f docker-compose.yml -f docker-compose.tools.yml down` |
 | Run the app locally | `./mvnw spring-boot:run` |
 | Fix formatting | `./mvnw spotless:apply` |
 | Full check before pushing | `./mvnw verify` |
